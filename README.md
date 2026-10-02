@@ -6,15 +6,13 @@ Hours are stored in Supabase and stay tied to your login, so the same entries sh
 
 ## Use it
 
-Open the site, create an account once, then sign in. Today is selected by default. Use the arrows or tap the date to change days. Add a number of hours, with at most one decimal place, and an optional note. Tap an entry to change or delete it.
-
-After the account exists, turn off **Allow new users to sign up** in Supabase under **Authentication → Sign In / Providers**.
+Open the site and sign in. Today is selected by default. Use the arrows or tap the date to change days. Add a number of hours, with at most one decimal place, and an optional note. Tap an entry to change or delete it.
 
 ## One-time setup
 
 1. Create a free project at [supabase.com](https://supabase.com).
 2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql). If you already created the table with start and end times, run [`supabase/migrate-to-hours.sql`](supabase/migrate-to-hours.sql) instead.
-3. Under **Authentication → Sign In / Providers**, turn off **Confirm email**. Leave **Allow new users to sign up** on until you create your account in the app.
+3. Under **Authentication → Users**, add your email and password. Under **Authentication → Sign In / Providers**, turn off **Confirm email** and **Allow new users to sign up**.
 4. In the GitHub repo, add Actions secrets:
    - `VITE_SUPABASE_URL` — the project URL (`https://something.supabase.co`)
    - `VITE_SUPABASE_ANON_KEY` — the publishable key (`sb_publishable_...`) or the anon key
