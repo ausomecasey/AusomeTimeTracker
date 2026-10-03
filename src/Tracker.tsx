@@ -138,7 +138,13 @@ export function Tracker({ store, onSignOut }: TrackerProps) {
     <main className="app">
       <header className="top">
         <div className="brand-row">
-          <p className="brand">Ausome Time Tracker</p>
+          <p className="brand">
+            <span className="brand-swatches" aria-hidden="true">
+              <i className="navy" />
+              <i className="orange" />
+            </span>
+            Ausome Time Tracker
+          </p>
           {onSignOut ? (
             <button className="linkish" type="button" onClick={onSignOut}>
               Sign out
