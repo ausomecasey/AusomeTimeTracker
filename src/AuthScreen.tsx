@@ -34,7 +34,13 @@ export function AuthScreen({ onPreview }: AuthScreenProps) {
   return (
     <main className="auth">
       <form className="auth-card" onSubmit={submit}>
-        <h1>Ausome Time Tracker</h1>
+        <h1>
+          <span className="brand-swatches" aria-hidden="true">
+            <i className="navy" />
+            <i className="orange" />
+          </span>
+          Ausome Time Tracker
+        </h1>
         <p className="lede">Sign in to record hours. The same account works on your phone and computer.</p>
         <label>
           <span>Email</span>

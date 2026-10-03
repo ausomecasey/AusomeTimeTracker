@@ -1,13 +1,20 @@
 :root {
   color-scheme: light;
-  --bg: #f3efe6;
-  --ink: #241c18;
-  --muted: #6e645c;
-  --line: #e3d9cc;
-  --paper: #fffdf8;
-  --accent: #9c3b2e;
-  --accent-ink: #fff8f4;
-  --chip: #241c18;
+  --navy: #153047;
+  --navy-deep: #102536;
+  --orange: #e06a1a;
+  --orange-deep: #c75a12;
+  --cream: #f6efe3;
+  --paper: #fffaf3;
+  --bg: var(--cream);
+  --ink: var(--navy);
+  --muted: #5d6b76;
+  --line: #d8cfc0;
+  --accent: var(--orange);
+  --accent-ink: #fff8f1;
+  --chip: var(--navy);
+  --chip-label: #ecc8a4;
+  --danger: #b23a24;
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--ink);
@@ -22,6 +29,13 @@ body {
   min-height: 100dvh;
 }
 
+body::before {
+  content: "";
+  display: block;
+  height: 0.4rem;
+  background: linear-gradient(90deg, var(--navy) 0 68%, var(--orange) 68% 100%);
+}
+
 button,
 input {
   font: inherit;
@@ -30,6 +44,12 @@ input {
 
 button {
   cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .app {
@@ -56,10 +76,36 @@ button {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.03em;
+  color: var(--navy);
+}
+
+.brand-swatches {
+  display: inline-flex;
+  width: 0.7rem;
+  height: 1.15rem;
+  overflow: hidden;
+  border-radius: 0.18rem;
+  flex: 0 0 auto;
+}
+
+.brand-swatches i {
+  display: block;
+  flex: 1;
+}
+
+.brand-swatches .navy {
+  background: var(--navy);
+}
+
+.brand-swatches .orange {
+  background: var(--orange);
 }
 
 .linkish {
@@ -82,6 +128,7 @@ button {
   border-radius: 999px;
   border: 1px solid var(--line);
   background: var(--paper);
+  color: var(--navy);
   font-size: 1.6rem;
   line-height: 1;
 }
@@ -95,6 +142,7 @@ button {
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--navy);
 }
 
 .date-label input {
@@ -125,17 +173,18 @@ button {
 
 .totals div {
   background: var(--chip);
-  color: #f6f1e7;
+  color: var(--accent-ink);
   border-radius: 0.95rem;
   padding: 0.7rem 0.35rem 0.75rem;
   text-align: center;
+  box-shadow: inset 0 0.18rem 0 var(--orange);
 }
 
 .totals dt {
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #d9cfc3;
+  color: var(--chip-label);
 }
 
 .totals dd {
@@ -162,7 +211,8 @@ button {
 }
 
 .entry.selected {
-  border-color: var(--ink);
+  border-color: var(--accent);
+  box-shadow: inset 0.18rem 0 0 var(--accent);
 }
 
 .entry-hours {
@@ -190,7 +240,7 @@ button {
 
 .banner,
 .form-error {
-  color: var(--accent);
+  color: var(--danger);
   margin: 0;
 }
 
@@ -207,6 +257,7 @@ button {
 .form h2 {
   margin: 0;
   font-size: 1rem;
+  color: var(--navy);
 }
 
 label span {
@@ -226,6 +277,7 @@ input[type='password'] {
   border: 1px solid var(--line);
   border-radius: 0.75rem;
   background: #fff;
+  color: var(--ink);
 }
 
 .primary,
@@ -240,6 +292,10 @@ input[type='password'] {
   border: 0;
   background: var(--accent);
   color: var(--accent-ink);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--orange-deep);
 }
 
 .primary:disabled,
@@ -259,8 +315,8 @@ input[type='password'] {
 }
 
 .danger {
-  border: 1px solid var(--accent);
-  color: var(--accent);
+  border: 1px solid var(--danger);
+  color: var(--danger);
 }
 
 .row-actions {
@@ -283,10 +339,19 @@ input[type='password'] {
 }
 
 .auth-card h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   margin: 0;
   font-size: 2.15rem;
   line-height: 1.05;
   letter-spacing: -0.04em;
+  color: var(--navy);
+}
+
+.auth-card .brand-swatches {
+  width: 0.85rem;
+  height: 1.7rem;
 }
 
 .lede {
