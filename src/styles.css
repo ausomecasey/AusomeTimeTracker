@@ -443,6 +443,7 @@ input[type='password'] {
   margin: 0;
   color: var(--muted);
   font-size: 0.85rem;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -463,12 +464,6 @@ input[type='password'] {
   background: var(--paper);
   color: var(--ink);
   line-height: 1.45;
-}
-
-.todo-save {
-  width: 100%;
-  min-height: 3.25rem;
-  font-size: 1.1rem;
 }
 
 .sr-only {
