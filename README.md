@@ -15,7 +15,7 @@ The to-do list is one continuous note. It auto-saves as you type. Press Enter to
 ## One-time setup
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql). If you already created the hours table, run [`supabase/add-todo-notes.sql`](supabase/add-todo-notes.sql) to add the master to-do list. If you already created the table with start and end times, run [`supabase/migrate-to-hours.sql`](supabase/migrate-to-hours.sql) as well.
+2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql). If you already created the hours table, run [`supabase/add-todo-notes.sql`](supabase/add-todo-notes.sql) to add the master to-do list. That script is safe to run more than once. If you already created the table with start and end times, run [`supabase/migrate-to-hours.sql`](supabase/migrate-to-hours.sql) as well. If the to-do table exists but saving still fails, run [`supabase/repair-todo-notes.sql`](supabase/repair-todo-notes.sql).
 3. Under **Authentication → Users**, add your email and password. Under **Authentication → Sign In / Providers**, turn off **Confirm email** and **Allow new users to sign up**.
 4. In the GitHub repo, add Actions secrets:
    - `VITE_SUPABASE_URL` — the project URL (`https://something.supabase.co`)

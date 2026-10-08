@@ -104,28 +104,26 @@ function throwStoreError(error: unknown, fallback: string): never {
 export function createSupabaseTodoStore(client: SupabaseClient): TodoStore {
   return {
     async load() {
-      const { data, error } = await client.from('todo_notes').select('body').maybeSingle()
+      const { data: sessionData } = await client.auth.getSession()
+      const userId = sessionData.session?.user.id
+      let query = client.from('todo_notes').select('body')
+      if (userId) query = query.eq('user_id', userId)
+      const { data, error } = await query.maybeSingle()
       if (error) throwStoreError(error, 'Could not load your list.')
       return { body: data?.body ?? '' }
     },
     async save(body) {
+      const { data: sessionData, error: sessionError } = await client.auth.getSession()
+      if (sessionError) throwStoreError(sessionError, 'Sign in to save your list.')
+      const userId = sessionData.session?.user.id
+      if (!userId) throw new Error('Sign in to save your list.')
+
       const stamp = new Date().toISOString()
-      const { data, error: updateError } = await client
-        .from('todo_notes')
-        .update({ body, updated_at: stamp })
-        .select('user_id')
-      if (updateError) throwStoreError(updateError, 'Could not save your list.')
-      if (data && data.length > 0) return
-
-      const { error: insertError } = await client.from('todo_notes').insert({ body, updated_at: stamp })
-      if (!insertError) return
-
-      const { error: retryError } = await client
-        .from('todo_notes')
-        .update({ body, updated_at: stamp })
-        .select('user_id')
-      if (retryError) throwStoreError(retryError, 'Could not save your list.')
-      throwStoreError(insertError, 'Could not save your list.')
+      const { error } = await client.from('todo_notes').upsert(
+        { user_id: userId, body, updated_at: stamp },
+        { onConflict: 'user_id' },
+      )
+      if (error) throwStoreError(error, 'Could not save your list.')
     },
   }
 }

@@ -1,17 +1,10 @@
--- Safe to re-run. Adds a single master to-do list per signed-in user.
-
-create table if not exists public.todo_notes (
-  user_id uuid primary key default auth.uid() references auth.users (id) on delete cascade,
-  body text not null default '',
-  updated_at timestamptz not null default now()
-);
+-- Safe to re-run. The table already exists; this only repairs columns, grants, and policies.
 
 alter table public.todo_notes add column if not exists body text not null default '';
 alter table public.todo_notes add column if not exists updated_at timestamptz not null default now();
 
 alter table public.todo_notes enable row level security;
 
-revoke all on table public.todo_notes from anon, public;
 grant select, insert, update on table public.todo_notes to authenticated;
 
 drop policy if exists "todo_notes_select_own" on public.todo_notes;
