@@ -10,7 +10,7 @@ Open the site and sign in. After login, switch between **Ausome Time Tracker** a
 
 Today is selected by default on the tracker. Use the arrows or tap the date to change days. Add a number of hours, with at most one decimal place, and an optional note. Tap an entry to change or delete it.
 
-The to-do list is one continuous note. It auto-saves as you type. Press Enter to continue a `- `, `1. `, or `a. ` list. Use Bold and Italic, or Ctrl/Cmd+B and I. Tap **Save** if you want to save immediately.
+The to-do list is one continuous note. It auto-saves as you type. Press Enter to continue a `- `, `1. `, or `a. ` list. Use Bold and Italic, or Ctrl/Cmd+B and I. The status next to the toolbar says when it is saved.
 
 ## One-time setup
 

@@ -147,7 +147,7 @@ export function explainTodoWriteError(error: unknown, action: 'load' | 'save'): 
   if (looksLikeMissingTodoTable(error)) {
     return action === 'load'
       ? 'Run the todo_notes SQL in Supabase, then refresh.'
-      : 'Run the todo_notes SQL in Supabase, then tap Save.'
+      : 'Run the todo_notes SQL in Supabase, then keep typing. It will try again.'
   }
   return errorMessage(error) || (action === 'load' ? 'Could not load your list.' : 'Could not save your list.')
 }

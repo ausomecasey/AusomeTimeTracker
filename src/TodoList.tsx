@@ -177,14 +177,6 @@ export function TodoList({ store }: TodoListProps) {
         </p>
       </div>
       {error ? <p className="banner">{error}</p> : null}
-      <button
-        className="primary todo-save"
-        type="button"
-        onClick={() => void flush(textRef.current)}
-        disabled={!ready}
-      >
-        {status === 'saving' ? 'Saving…' : 'Save'}
-      </button>
       <label className="todo-field">
         <span className="sr-only">Master to-do list</span>
         <textarea
