@@ -17,3 +17,8 @@ export type EntryStore = {
   update(id: string, draft: EntryDraft): Promise<void>
   remove(id: string): Promise<void>
 }
+
+export type TodoStore = {
+  load(): Promise<string>
+  save(body: string): Promise<void>
+}

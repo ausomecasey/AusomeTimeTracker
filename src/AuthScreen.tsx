@@ -39,9 +39,9 @@ export function AuthScreen({ onPreview }: AuthScreenProps) {
             <i className="navy" />
             <i className="orange" />
           </span>
-          Ausome Time Tracker
+          Ausome Apps
         </h1>
-        <p className="lede">Sign in to record hours. The same account works on your phone and computer.</p>
+        <p className="lede">Sign in to open your apps. The same account works on your phone and computer.</p>
         <label>
           <span>Email</span>
           <input
@@ -68,7 +68,7 @@ export function AuthScreen({ onPreview }: AuthScreenProps) {
         </button>
         {onPreview ? (
           <button className="linkish preview-link" type="button" onClick={onPreview}>
-            Preview the tracker on this device
+            Preview the apps on this device
           </button>
         ) : null}
       </form>

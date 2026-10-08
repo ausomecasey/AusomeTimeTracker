@@ -1,17 +1,21 @@
-# Ausome Time Tracker
+# Ausome Apps
 
-An AU-some lightweight time tracking application. Each day can have several entries. The screen shows totals for that day, its Monday–Sunday week, and its calendar month.
+An AU-some pair of phone-friendly apps behind one login: a time tracker and a single master to-do list.
 
-Hours are stored in Supabase and stay tied to your login, so the same entries show up on your phone and your computer. The site itself is static and hosted on GitHub Pages.
+Hours and the to-do list are stored in Supabase and stay tied to your login, so the same data shows up on your phone and your computer. The site itself is static and hosted on GitHub Pages.
 
 ## Use it
 
-Open the site and sign in. Today is selected by default. Use the arrows or tap the date to change days. Add a number of hours, with at most one decimal place, and an optional note. Tap an entry to change or delete it.
+Open the site and sign in. After login, switch between **Ausome Time Tracker** and **Ausome To-Do List**.
+
+Today is selected by default on the tracker. Use the arrows or tap the date to change days. Add a number of hours, with at most one decimal place, and an optional note. Tap an entry to change or delete it.
+
+The to-do list is one continuous note. It auto-saves as you type. Press Enter to continue a `- `, `1. `, or `a. ` list. Use Bold and Italic, or Ctrl/Cmd+B and I. Tap **Save** if you want to save immediately.
 
 ## One-time setup
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql). If you already created the table with start and end times, run [`supabase/migrate-to-hours.sql`](supabase/migrate-to-hours.sql) instead.
+2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql). If you already created the hours table, run [`supabase/add-todo-notes.sql`](supabase/add-todo-notes.sql) to add the master to-do list. If you already created the table with start and end times, run [`supabase/migrate-to-hours.sql`](supabase/migrate-to-hours.sql) as well.
 3. Under **Authentication → Users**, add your email and password. Under **Authentication → Sign In / Providers**, turn off **Confirm email** and **Allow new users to sign up**.
 4. In the GitHub repo, add Actions secrets:
    - `VITE_SUPABASE_URL` — the project URL (`https://something.supabase.co`)

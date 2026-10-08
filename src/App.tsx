@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { Apps } from './Apps'
 import { AuthScreen } from './AuthScreen'
-import { Tracker } from './Tracker'
-import { createMemoryStore, createSupabaseStore } from './store'
+import { createMemoryStore, createMemoryTodoStore, createSupabaseStore, createSupabaseTodoStore } from './store'
 import { isSupabaseConfigured, supabase } from './supabase'
 
 export default function App() {
@@ -12,10 +12,9 @@ export default function App() {
     () => import.meta.env.DEV && new URLSearchParams(window.location.search).has('preview'),
   )
   const memoryStore = useMemo(() => createMemoryStore(), [])
-  const remoteStore = useMemo(
-    () => (supabase ? createSupabaseStore(supabase) : null),
-    [],
-  )
+  const memoryTodoStore = useMemo(() => createMemoryTodoStore(), [])
+  const remoteStore = useMemo(() => (supabase ? createSupabaseStore(supabase) : null), [])
+  const remoteTodoStore = useMemo(() => (supabase ? createSupabaseTodoStore(supabase) : null), [])
 
   useEffect(() => {
     if (!supabase) return
@@ -42,18 +41,19 @@ export default function App() {
   }
 
   if (preview) {
-    return <Tracker store={memoryStore} />
+    return <Apps entryStore={memoryStore} todoStore={memoryTodoStore} />
   }
 
-  if (!session || !supabase || !remoteStore) {
+  if (!session || !supabase || !remoteStore || !remoteTodoStore) {
     return <AuthScreen onPreview={import.meta.env.DEV ? () => setPreview(true) : undefined} />
   }
 
   const client = supabase
 
   return (
-    <Tracker
-      store={remoteStore}
+    <Apps
+      entryStore={remoteStore}
+      todoStore={remoteTodoStore}
       onSignOut={() => {
         void client.auth.signOut()
       }}

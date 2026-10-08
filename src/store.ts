@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Entry, EntryDraft, EntryStore } from './types'
+import type { Entry, EntryDraft, EntryStore, TodoStore } from './types'
 
 function noteOrNull(note: string): string | null {
   const trimmed = note.trim()
@@ -90,6 +90,41 @@ export function createMemoryStore(): EntryStore {
     },
     async remove(id) {
       entries = entries.filter((entry) => entry.id !== id)
+    },
+  }
+}
+
+export function createSupabaseTodoStore(client: SupabaseClient): TodoStore {
+  return {
+    async load() {
+      const { data, error } = await client.from('todo_notes').select('body').maybeSingle()
+      if (error) throw error
+      return data?.body ?? ''
+    },
+    async save(body) {
+      const { data: userResult, error: userError } = await client.auth.getUser()
+      if (userError) throw userError
+      const user = userResult.user
+      if (!user) throw new Error('Sign in to save your list.')
+      const { error } = await client.from('todo_notes').upsert({
+        user_id: user.id,
+        body,
+        updated_at: new Date().toISOString(),
+      })
+      if (error) throw error
+    },
+  }
+}
+
+export function createMemoryTodoStore(): TodoStore {
+  let body = ''
+
+  return {
+    async load() {
+      return body
+    },
+    async save(next) {
+      body = next
     },
   }
 }

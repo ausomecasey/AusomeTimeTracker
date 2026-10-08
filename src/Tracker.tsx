@@ -18,7 +18,6 @@ import type { Entry, EntryStore } from './types'
 
 type TrackerProps = {
   store: EntryStore
-  onSignOut?: () => void
 }
 
 function validate(hours: string, note: string): string {
@@ -28,7 +27,7 @@ function validate(hours: string, note: string): string {
   return ''
 }
 
-export function Tracker({ store, onSignOut }: TrackerProps) {
+export function Tracker({ store }: TrackerProps) {
   const today = todayISO()
   const [day, setDay] = useState(today)
   const [entries, setEntries] = useState<Entry[]>([])
@@ -137,20 +136,6 @@ export function Tracker({ store, onSignOut }: TrackerProps) {
   return (
     <main className="app">
       <header className="top">
-        <div className="brand-row">
-          <p className="brand">
-            <span className="brand-swatches" aria-hidden="true">
-              <i className="navy" />
-              <i className="orange" />
-            </span>
-            Ausome Time Tracker
-          </p>
-          {onSignOut ? (
-            <button className="linkish" type="button" onClick={onSignOut}>
-              Sign out
-            </button>
-          ) : null}
-        </div>
         <div className="date-nav">
           <button className="icon-btn" type="button" onClick={() => selectDay(addDays(day, -1))} aria-label="Previous day">
             ‹
