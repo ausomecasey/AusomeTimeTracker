@@ -1,6 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Entry, EntryDraft, EntryStore, TodoStore } from './types'
 
+const TODO_CACHE_KEY = 'ausome-todo-list'
+
 function noteOrNull(note: string): string | null {
   const trimmed = note.trim()
   return trimmed ? trimmed : null
@@ -99,19 +101,25 @@ export function createSupabaseTodoStore(client: SupabaseClient): TodoStore {
     async load() {
       const { data, error } = await client.from('todo_notes').select('body').maybeSingle()
       if (error) throw error
-      return data?.body ?? ''
+      return { body: data?.body ?? '' }
     },
     async save(body) {
-      const { data: userResult, error: userError } = await client.auth.getUser()
-      if (userError) throw userError
-      const user = userResult.user
-      if (!user) throw new Error('Sign in to save your list.')
-      const { error } = await client.from('todo_notes').upsert({
-        user_id: user.id,
-        body,
-        updated_at: new Date().toISOString(),
-      })
-      if (error) throw error
+      const stamp = new Date().toISOString()
+      const { data, error: updateError } = await client
+        .from('todo_notes')
+        .update({ body, updated_at: stamp })
+        .select('user_id')
+      if (updateError) throw updateError
+      if (data && data.length > 0) return
+
+      const { error: insertError } = await client.from('todo_notes').insert({ body, updated_at: stamp })
+      if (!insertError) return
+
+      const { data: retry, error: retryError } = await client
+        .from('todo_notes')
+        .update({ body, updated_at: stamp })
+        .select('user_id')
+      if (retryError || !retry?.length) throw insertError
     },
   }
 }
@@ -121,10 +129,44 @@ export function createMemoryTodoStore(): TodoStore {
 
   return {
     async load() {
-      return body
+      return { body }
     },
     async save(next) {
       body = next
+    },
+  }
+}
+
+export function withLocalTodoCache(store: TodoStore, key = TODO_CACHE_KEY): TodoStore {
+  return {
+    async load() {
+      const cached = window.localStorage.getItem(key)
+      try {
+        const result = await store.load()
+        if (!result.body && cached) {
+          try {
+            await store.save(cached)
+          } catch {
+            return { body: cached }
+          }
+          return { body: cached }
+        }
+        window.localStorage.setItem(key, result.body)
+        return result
+      } catch (error) {
+        if (cached === null) throw error
+        return {
+          body: cached,
+          warning:
+            error instanceof Error
+              ? `${error.message} Showing the last copy saved on this device.`
+              : 'Could not reach the server. Showing the last copy saved on this device.',
+        }
+      }
+    },
+    async save(body) {
+      window.localStorage.setItem(key, body)
+      await store.save(body)
     },
   }
 }

@@ -2,7 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Apps } from './Apps'
 import { AuthScreen } from './AuthScreen'
-import { createMemoryStore, createMemoryTodoStore, createSupabaseStore, createSupabaseTodoStore } from './store'
+import {
+  createMemoryStore,
+  createMemoryTodoStore,
+  createSupabaseStore,
+  createSupabaseTodoStore,
+  withLocalTodoCache,
+} from './store'
 import { isSupabaseConfigured, supabase } from './supabase'
 
 export default function App() {
@@ -12,9 +18,12 @@ export default function App() {
     () => import.meta.env.DEV && new URLSearchParams(window.location.search).has('preview'),
   )
   const memoryStore = useMemo(() => createMemoryStore(), [])
-  const memoryTodoStore = useMemo(() => createMemoryTodoStore(), [])
+  const memoryTodoStore = useMemo(() => withLocalTodoCache(createMemoryTodoStore()), [])
   const remoteStore = useMemo(() => (supabase ? createSupabaseStore(supabase) : null), [])
-  const remoteTodoStore = useMemo(() => (supabase ? createSupabaseTodoStore(supabase) : null), [])
+  const remoteTodoStore = useMemo(
+    () => (supabase ? withLocalTodoCache(createSupabaseTodoStore(supabase)) : null),
+    [],
+  )
 
   useEffect(() => {
     if (!supabase) return

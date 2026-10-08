@@ -27,12 +27,13 @@ export function TodoList({ store }: TodoListProps) {
     setError('')
     store
       .load()
-      .then((body) => {
+      .then((result) => {
         if (cancelled) return
-        setText(body)
-        textRef.current = body
-        savedRef.current = body
-        setStatus('saved')
+        setText(result.body)
+        textRef.current = result.body
+        savedRef.current = result.body
+        setStatus(result.warning ? 'error' : 'saved')
+        setError(result.warning ?? '')
         setReady(true)
       })
       .catch((loadError: unknown) => {
@@ -187,6 +188,7 @@ export function TodoList({ store }: TodoListProps) {
           {statusLabel}
         </p>
       </div>
+      {error ? <p className="banner">{error}</p> : null}
       <label className="todo-field">
         <span className="sr-only">Master to-do list</span>
         <textarea
@@ -206,15 +208,14 @@ export function TodoList({ store }: TodoListProps) {
           }}
         />
       </label>
-      {error ? <p className="form-error">{error}</p> : null}
       <div className="todo-save-bar">
         <button
           className="primary todo-save"
           type="button"
           onClick={() => void flush(textRef.current)}
-          disabled={!ready || status === 'saving'}
+          disabled={!ready}
         >
-          Save
+          {status === 'saving' ? 'Saving…' : 'Save'}
         </button>
       </div>
     </main>

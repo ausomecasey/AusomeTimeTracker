@@ -18,7 +18,12 @@ export type EntryStore = {
   remove(id: string): Promise<void>
 }
 
+export type TodoLoad = {
+  body: string
+  warning?: string
+}
+
 export type TodoStore = {
-  load(): Promise<string>
+  load(): Promise<TodoLoad>
   save(body: string): Promise<void>
 }
