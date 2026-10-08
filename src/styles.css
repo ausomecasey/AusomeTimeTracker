@@ -465,13 +465,6 @@ input[type='password'] {
   line-height: 1.45;
 }
 
-.todo-save-bar {
-  position: sticky;
-  bottom: 0;
-  padding-top: 0.25rem;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-}
-
 .todo-save {
   width: 100%;
   min-height: 3.25rem;

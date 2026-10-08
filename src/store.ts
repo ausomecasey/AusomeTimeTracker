@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { errorMessage } from './todoText'
 import type { Entry, EntryDraft, EntryStore, TodoStore } from './types'
 
 const TODO_CACHE_KEY = 'ausome-todo-list'
@@ -96,11 +97,15 @@ export function createMemoryStore(): EntryStore {
   }
 }
 
+function throwStoreError(error: unknown, fallback: string): never {
+  throw new Error(errorMessage(error) || fallback)
+}
+
 export function createSupabaseTodoStore(client: SupabaseClient): TodoStore {
   return {
     async load() {
       const { data, error } = await client.from('todo_notes').select('body').maybeSingle()
-      if (error) throw error
+      if (error) throwStoreError(error, 'Could not load your list.')
       return { body: data?.body ?? '' }
     },
     async save(body) {
@@ -109,17 +114,18 @@ export function createSupabaseTodoStore(client: SupabaseClient): TodoStore {
         .from('todo_notes')
         .update({ body, updated_at: stamp })
         .select('user_id')
-      if (updateError) throw updateError
+      if (updateError) throwStoreError(updateError, 'Could not save your list.')
       if (data && data.length > 0) return
 
       const { error: insertError } = await client.from('todo_notes').insert({ body, updated_at: stamp })
       if (!insertError) return
 
-      const { data: retry, error: retryError } = await client
+      const { error: retryError } = await client
         .from('todo_notes')
         .update({ body, updated_at: stamp })
         .select('user_id')
-      if (retryError || !retry?.length) throw insertError
+      if (retryError) throwStoreError(retryError, 'Could not save your list.')
+      throwStoreError(insertError, 'Could not save your list.')
     },
   }
 }
@@ -157,10 +163,7 @@ export function withLocalTodoCache(store: TodoStore, key = TODO_CACHE_KEY): Todo
         if (cached === null) throw error
         return {
           body: cached,
-          warning:
-            error instanceof Error
-              ? `${error.message} Showing the last copy saved on this device.`
-              : 'Could not reach the server. Showing the last copy saved on this device.',
+          warning: `${errorMessage(error) || 'Could not reach the server.'} Showing the last copy saved on this device.`,
         }
       }
     },

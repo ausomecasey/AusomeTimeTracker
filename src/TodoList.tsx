@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { applyListKind, handleEnter, looksLikeMissingTodoTable, wrapSelection } from './todoText'
+import { applyListKind, explainTodoWriteError, handleEnter, wrapSelection } from './todoText'
 import type { TodoStore } from './types'
 
 type TodoListProps = {
@@ -40,13 +40,7 @@ export function TodoList({ store }: TodoListProps) {
         if (cancelled) return
         setReady(true)
         setStatus('error')
-        setError(
-          looksLikeMissingTodoTable(loadError)
-            ? 'Run the todo_notes SQL in Supabase, then refresh.'
-            : loadError instanceof Error
-              ? loadError.message
-              : 'Could not load your list.',
-        )
+        setError(explainTodoWriteError(loadError, 'load'))
       })
     return () => {
       cancelled = true
@@ -80,13 +74,7 @@ export function TodoList({ store }: TodoListProps) {
     } catch (saveError: unknown) {
       inflightRef.current = false
       setStatus('error')
-      setError(
-        looksLikeMissingTodoTable(saveError)
-          ? 'Run the todo_notes SQL in Supabase, then tap Save.'
-          : saveError instanceof Error
-            ? saveError.message
-            : 'Could not save your list.',
-      )
+      setError(explainTodoWriteError(saveError, 'save'))
     }
   }
 
@@ -189,6 +177,14 @@ export function TodoList({ store }: TodoListProps) {
         </p>
       </div>
       {error ? <p className="banner">{error}</p> : null}
+      <button
+        className="primary todo-save"
+        type="button"
+        onClick={() => void flush(textRef.current)}
+        disabled={!ready}
+      >
+        {status === 'saving' ? 'Saving…' : 'Save'}
+      </button>
       <label className="todo-field">
         <span className="sr-only">Master to-do list</span>
         <textarea
@@ -208,16 +204,6 @@ export function TodoList({ store }: TodoListProps) {
           }}
         />
       </label>
-      <div className="todo-save-bar">
-        <button
-          className="primary todo-save"
-          type="button"
-          onClick={() => void flush(textRef.current)}
-          disabled={!ready}
-        >
-          {status === 'saving' ? 'Saving…' : 'Save'}
-        </button>
-      </div>
     </main>
   )
 }

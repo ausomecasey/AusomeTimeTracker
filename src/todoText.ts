@@ -129,7 +129,25 @@ export function applyListKind(doc: TextCursor, kind: 'bullet' | 'number' | 'lett
   }
 }
 
+export function errorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) return error.message
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = (error as { message: unknown }).message
+    if (typeof message === 'string' && message.trim()) return message
+  }
+  if (typeof error === 'string' && error.trim()) return error
+  return ''
+}
+
 export function looksLikeMissingTodoTable(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error)
-  return /todo_notes|schema cache|Could not find the table/i.test(message)
+  return /todo_notes|schema cache|Could not find the table|PGRST205|42P01/i.test(errorMessage(error))
+}
+
+export function explainTodoWriteError(error: unknown, action: 'load' | 'save'): string {
+  if (looksLikeMissingTodoTable(error)) {
+    return action === 'load'
+      ? 'Run the todo_notes SQL in Supabase, then refresh.'
+      : 'Run the todo_notes SQL in Supabase, then tap Save.'
+  }
+  return errorMessage(error) || (action === 'load' ? 'Could not load your list.' : 'Could not save your list.')
 }
